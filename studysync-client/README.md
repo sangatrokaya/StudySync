@@ -35,3 +35,8 @@ Backend (Node + Express): REST API with JWT authentication
 Database (MongoDB): MongoDB Atlas with Mongoose
 File Storage: Cloudinary or Firebase Storage (optional)
 Version Control: Git + GitHub
+
+components - Reusable UI components
+pages - Pages rendered by routes
+layouts - Layouts like MainLayout, AuthLayout
+utils - Helper functions
