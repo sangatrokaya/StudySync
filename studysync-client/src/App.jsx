@@ -1,13 +1,16 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/Loginpage";
+import MainLayout from "./layouts/MainLayout";
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="login" element={<LoginPage />} />
+      </Route>
     </Routes>
   );
 };
