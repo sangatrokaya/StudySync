@@ -1,0 +1,48 @@
+# Dependency directories
+node_modules/
+dist/
+build/
+
+# Vite cache
+.vite/
+
+# Environment variables
+.env
+.env.* # if you have .env.production, .env.local, etc.
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+
+# Server build output (if applicable)
+server/dist/
+server/build/
+
+# Server temp or runtime files
+*.log
+*.pid
+*.seed
+*.tgz
+
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# Other IDEs or temp files
+*.swp
+*.swo
+*.bak
+
+
+# TypeScript build output
+*.tsbuildinfo
