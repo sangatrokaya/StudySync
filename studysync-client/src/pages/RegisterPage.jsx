@@ -21,6 +21,17 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        formData
+      );
+      console.log(res.data);
+      navigate("/login");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong!");
+    }
   };
 
   return (
