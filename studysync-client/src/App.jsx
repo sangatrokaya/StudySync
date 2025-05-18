@@ -1,16 +1,17 @@
-import { Route, Routes, BrowserRouter } from "react-router-dom";
-import LoginPage from "./pages/Loginpage";
+import { Route, Routes } from "react-router-dom";
 import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/Loginpage";
+import MainLayout from "./layouts/MainLayout";
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/register" element={<RegisterPage />} />
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        {/* <Route index element={<HomePage />} /> */}
+        <Route path="register" element={<RegisterPage />} />
         <Route path="login" element={<LoginPage />} />
-        {/* Later we will add /dashboard, /notes etc. */}
-      </Routes>
-    </BrowserRouter>
+      </Route>
+    </Routes>
   );
 };
 
