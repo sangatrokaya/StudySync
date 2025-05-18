@@ -35,7 +35,7 @@ export const getUserNotes = async (req, res) => {
 // @desc update a specific note
 // @route PUT /api/notes/:id
 // @status Protected
-export default updateNote = async (req, res) => {
+export const updateNote = async (req, res) => {
   try {
     const { id } = req.params;
     const note = await Note.findById(id);
