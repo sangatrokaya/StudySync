@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 // create a base axios instance
 const instance = axios.create({
@@ -14,5 +15,18 @@ instance.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// When token is invalid/expired, Redirect on 401 Unauthorized
+instance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      toast.error("Session expired. Please login again.");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default instance;
