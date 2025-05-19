@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpenCheck, Rocket } from "lucide-react";
+import { BookOpenCheck, Rocket, Handshake } from "lucide-react";
 
 const HomePage = () => {
   return (
@@ -48,7 +48,7 @@ const HomePage = () => {
             Fast & Lightweight
           </div>
           <div className="flex flex-col items-center">
-            <Rocket className="w-6 h-6 mb-1 text-purple-500" />
+            <Handshake className="w-6 h-6 mb-1 text-purple-500" />
             Mobile-friendly UI
           </div>
         </div>
