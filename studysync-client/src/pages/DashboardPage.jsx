@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../axios"; /* Custom axios instance */
-import { PlusCircle, Trash2 } from "lucide-react"; /* For icons */
+import { PlusCircle, Trash2, SquarePen } from "lucide-react"; /* For icons */
 
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editNoteId, setEditNoteId] = useState(null);
   const navigate = useNavigate();
 
   //   Get token from localStorage
@@ -47,17 +49,31 @@ const DashboardPage = () => {
       return;
     }
     try {
-      const res = await axios.post("/notes", { title, content });
+      if (isEditing) {
+        // Update existing note
+        const res = await axios.put(`/notes/${editNoteId}`, { title, content });
 
-      //   Add new note to the top of list
-      setNotes([res.data, ...notes]);
+        // Replace the updated note in the list
+        const updatedNotes = notes.map((note) =>
+          note._id === editNoteId ? res.data : note
+        );
+        setNotes(updatedNotes);
+
+        // Reset editing state
+        setIsEditing(false);
+        setEditNoteId(null);
+      } else {
+        //   Add new note to the top of list
+        const res = await axios.post("/notes", { title, content });
+        setNotes([res.data, ...notes]);
+      }
 
       //   Clear form
       setTitle("");
       setContent("");
     } catch (err) {
       console.error(
-        "Failed to create new note!",
+        "Failed to create a new note!",
         err.response?.data?.message || err.message
       );
     }
@@ -78,6 +94,14 @@ const DashboardPage = () => {
         err.response?.data?.message || err.message
       );
     }
+  };
+
+  //   Edit handler
+  const handleEdit = (note) => {
+    setIsEditing(true);
+    setEditNoteId(note._id);
+    setTitle(note.title);
+    setContent(note.content);
   };
 
   return (
@@ -110,11 +134,11 @@ const DashboardPage = () => {
             className="w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition"
           >
             <PlusCircle size={20} />
-            Add Note
+            {isEditing ? "Update Note" : "Add Note"}
           </button>
         </form>
         {/* Notes List */}
-        <div className="sapce-y-4">
+        <div className="space-y-4">
           {notes.length === 0 ? (
             <div>No notes yet. Start writing!</div>
           ) : (
@@ -132,6 +156,12 @@ const DashboardPage = () => {
                 <p className="text-sm text-gray-400 mt-3">
                   Updated: {new Date(note.updatedAt).toLocaleString()}
                 </p>
+                <button
+                  onClick={() => handleEdit(note)}
+                  className="absolute top-3 right-10 text-blue-500 hover:text-blue-700"
+                >
+                  <SquarePen size={19} />
+                </button>
                 <button
                   onClick={() => handleDelete(note._id)}
                   className="absolute top-3 right-3 text-red-500 hover:text-red-700"
