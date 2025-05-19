@@ -7,6 +7,10 @@ export const createNote = async (req, res) => {
   try {
     const { title, content } = req.body;
 
+    if (!title || !content) {
+      res.status(400).json({ message: "Title and Content are required!" });
+    }
+
     const newNote = new Note({
       title,
       content,
