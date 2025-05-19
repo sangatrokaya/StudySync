@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "../axios";
 
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
@@ -8,6 +8,7 @@ const DashboardPage = () => {
 
   //   Get token from localStorage
   const token = localStorage.getItem("token");
+
   //   Redirect if no token
   useEffect(() => {
     if (!token) {
@@ -19,11 +20,9 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/notes", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          "/notes"
+        ); /* Just the relative path in place of whole url and headerrs */
         setNotes(res.data);
       } catch (error) {
         console.error("Failed to fetch notes!", error);
@@ -34,17 +33,19 @@ const DashboardPage = () => {
   }, [token]);
 
   return (
-    <div>
-      <h2>Your Notes</h2>
+    <div className="max-w-3xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4">Your Notes</h2>
       {notes.length === 0 ? (
         <p>No notes found. Start by creating one.</p>
       ) : (
-        <div>
+        <div className="sapce-y-4">
           {notes.map((note) => (
-            <div key={note._id}>
-              <h3>{note.title}</h3>
+            <div key={note._id} className="p-4 border rounded shadow bg-white">
+              <h3 className="text-xl font-semibold">{note.title}</h3>
               <p>{note.content}</p>
-              <p>Updated: {new Date(note.updatedAt).toLocaleString()}</p>
+              <p className="text-sm text-gray-500 font-semibold">
+                Updated: {new Date(note.updatedAt).toLocaleString()}
+              </p>
               {/* Edit/Delete buttons will come later */}
             </div>
           ))}
