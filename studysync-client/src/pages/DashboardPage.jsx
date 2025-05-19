@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../axios"; /* Custom axios instance */
-import { PlusCircle, Trash2, SquarePen } from "lucide-react"; /* For icons */
+import {
+  PlusCircle,
+  Trash2,
+  SquarePen,
+  LogOutIcon,
+} from "lucide-react"; /* For icons */
 
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
@@ -106,6 +111,17 @@ const DashboardPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-8">
+      <button
+        onClick={() => {
+          localStorage.removeItem("token"); /* clear token */
+          navigate("/login"); /* Redirect to login */
+        }}
+        className="bg-red-500 hover:bg-red-600 flex items-center gap-2 text-white py-2 px-4 rounded-lg transition-colors duration-200"
+      >
+        <LogOutIcon size={20} />
+        Log out
+      </button>
+
       <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
         StudySync Notes
       </h2>
