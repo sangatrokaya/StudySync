@@ -1,4 +1,4 @@
-import jwt, { decode } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 // Middleware to protect private routes
@@ -15,7 +15,6 @@ const protect = async (req, res, next) => {
 
     // Extract token from header
     const token = authHeader.split(" ")[1];
-
     // Verify token using JWT_SECRET
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
