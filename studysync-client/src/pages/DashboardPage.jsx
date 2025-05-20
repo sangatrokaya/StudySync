@@ -124,6 +124,14 @@ const DashboardPage = () => {
     setContent(note.content);
   };
 
+  // Filter Notes list before rendering
+  const filteredNotes = notes.filter((note) => {
+    return (
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
+
   return (
     <div className="max-w-7xl mx-auto py-10 px-6">
       {/* Top Bar */}
@@ -186,10 +194,10 @@ const DashboardPage = () => {
 
         {/* Notes List */}
         <div className="space-y-4">
-          {notes.length === 0 ? (
-            <div>No notes yet. Start writing!</div>
+          {filteredNotes.length === 0 ? (
+            <div>No notes found. Start writing!</div>
           ) : (
-            notes.map((note) => (
+            filteredNotes.map((note) => (
               <div
                 key={note._id}
                 className="p-5 rounded-xl shadow-lg bg-white border relative hover:shadow-xl transition "
