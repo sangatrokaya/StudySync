@@ -7,6 +7,7 @@ import {
   SquarePen,
   LogOutIcon,
 } from "lucide-react"; /* For icons */
+import toast from "react-hot-toast";
 
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
@@ -49,10 +50,16 @@ const DashboardPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !content) {
-      alert("Please fill in both the fields.");
+    // Form Validation
+    if (!title.trim() || !content.trim()) {
+      toast.error("Title and content cannot be empty!");
       return;
     }
+
+    // if (!title || !content) {
+    //   alert("Please fill in both the fields.");
+    //   return;
+    // }
     try {
       if (isEditing) {
         // Update existing note
