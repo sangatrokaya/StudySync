@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../axios"; /* Custom axios instance */
 import {
@@ -56,10 +56,6 @@ const DashboardPage = () => {
       return;
     }
 
-    // if (!title || !content) {
-    //   alert("Please fill in both the fields.");
-    //   return;
-    // }
     try {
       if (isEditing) {
         // Update existing note
@@ -80,14 +76,24 @@ const DashboardPage = () => {
         setNotes([res.data, ...notes]);
       }
 
-      //   Clear form
+      //   Reset form
       setTitle("");
       setContent("");
+      toast.success("Note added!");
     } catch (err) {
       console.error(
-        "Failed to create a new note!",
+        "Failed to add a new note!",
         err.response?.data?.message || err.message
       );
+
+      // Enhanced error handler
+      if (err.resonse && err.response.data && err.response.data.message) {
+        toast.error(err.response.data.message);
+      } else if (err.message === "Network Error") {
+        toast.error("network error. Please check your connection.");
+      } else {
+        toast.error("Something went wrong while adding the note.");
+      }
     }
   };
 
@@ -105,6 +111,7 @@ const DashboardPage = () => {
         "Error deleting the note!",
         err.response?.data?.message || err.message
       );
+      toast.error("Error deleting the note!");
     }
   };
 
@@ -144,13 +151,13 @@ const DashboardPage = () => {
             value={title}
             placeholder="Note Title"
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <textarea
             value={content}
             placeholder="Write Your Note Content Here..."
             onChange={(e) => setContent(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg h-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg px-4 py-2 h-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
           <button
             type="submit"
