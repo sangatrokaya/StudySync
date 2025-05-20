@@ -1,7 +1,8 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
+import User from "../models/User.js";
 
 // Middleware to protect private routes
-const protect = (req, res, next) => {
+const protect = async (req, res, next) => {
   try {
     // Check if Authorization header is present and starts with "Bearer"
     const authHeader = req.headers.authorization;
@@ -18,8 +19,15 @@ const protect = (req, res, next) => {
     // Verify token using JWT_SECRET
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    // Fetch user from DB and exclude password
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found!" });
+    }
+
     // Attach user ID to request object for later use in controllers
-    req.userId = decoded.id;
+    req.user = user;
 
     // Proceed to the next middleware/controller
     next();

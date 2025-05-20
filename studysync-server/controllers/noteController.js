@@ -14,7 +14,7 @@ export const createNote = async (req, res) => {
     const newNote = new Note({
       title,
       content,
-      user: req.userId, // Comes from auth middleware
+      user: req.user._id, // Comes from auth middleware
     });
 
     await newNote.save();
@@ -29,7 +29,9 @@ export const createNote = async (req, res) => {
 // @status Protected
 export const getUserNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.userId }).sort({ createdAt: -1 });
+    const notes = await Note.find({ user: req.user._id }).sort({
+      updatedAt: -1,
+    });
     res.status(200).json(notes);
   } catch (error) {
     res.status(500).json({ message: "Failed to get notes!" });
@@ -45,7 +47,7 @@ export const updateNote = async (req, res) => {
     const note = await Note.findById(id);
 
     if (!note) return res.status(404).json({ message: "Note not found!" });
-    if (note.user.toString() !== req.userId)
+    if (note.user.toString() !== req.user._id.toString())
       return res.status(403).json({ message: "Unauthorized!" });
 
     note.title = req.body.title || note.title;
@@ -67,7 +69,7 @@ export const deleteNote = async (req, res) => {
     const note = await Note.findById(id);
 
     if (!note) return res.status(404).json({ message: "Note not found!" });
-    if (note.user.toString() !== req.userId)
+    if (note.user.toString() !== req.user._id.toString())
       return res.status(403).json({ message: "Unauthorized!" });
 
     await note.deleteOne();
