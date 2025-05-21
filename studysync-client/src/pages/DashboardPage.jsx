@@ -16,6 +16,8 @@ const DashboardPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editNoteId, setEditNoteId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterBy, setFilterBy] = useState("all");
+  const [sortBy, setSortBy] = useState("latest");
   const navigate = useNavigate();
 
   //   Get token from localStorage
@@ -83,7 +85,7 @@ const DashboardPage = () => {
       toast.success("Note added!");
     } catch (err) {
       console.error(
-        "Failed to add a new note!",
+        "Failed to add/update a new note!",
         err.response?.data?.message || err.message
       );
 
@@ -124,13 +126,27 @@ const DashboardPage = () => {
     setContent(note.content);
   };
 
-  // Filter Notes list before rendering
-  const filteredNotes = notes.filter((note) => {
-    return (
-      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.content.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
+  // Filter + Sort Notes list before rendering
+  const filteredNotes = notes
+    .filter((note) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        note.title.toLowerCase().includes(query) ||
+        note.content.toLowerCase().includes(query)
+      );
+    })
+    .filter((note) => {
+      if (filterBy === "long") return note.content.length > 100;
+      if (filterBy === "short") return note.content.length <= 100;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === "latest") {
+        return new Date(b.updatedAt) - new Date(a.updatedAt);
+      } else {
+        return new Date(a.updatedAt) - new Date(b.updatedAt);
+      }
+    });
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-6">
@@ -159,6 +175,27 @@ const DashboardPage = () => {
       <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
         StudySync Notes
       </h2>
+
+      {/* Controls */}
+      <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-8">
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="latest">Sort: Latest First</option>
+          <option value="Oldest">Sort: Oldest First</option>
+        </select>
+        <select
+          value={filterBy}
+          onChange={(e) => setFilterBy(e.target.value)}
+          className="border border-gray-300 rounded-lg px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="all">Filter: All Notes</option>
+          <option value="long">Long Notes</option>
+          <option value="short">Short Notes</option>
+        </select>
+      </div>
 
       {/* Main Grid */}
       <div className="grid md:grid-cols-2 gap-8">
