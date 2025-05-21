@@ -4,15 +4,6 @@ import { getProfile } from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.get(
-  "/profile",
-  protect,
-  (req, res) => {
-    res
-      .status(200)
-      .json({ message: "Welcome to your profile!", userId: req.user._id });
-  },
-  getProfile
-);
+router.get("/profile", protect, getProfile);
 
 export default router;

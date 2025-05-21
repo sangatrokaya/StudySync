@@ -1,4 +1,3 @@
-import React from "react";
 import { Outlet, Link } from "react-router-dom";
 
 const MainLayout = () => {
@@ -14,7 +13,10 @@ const MainLayout = () => {
             Home
           </Link>
           <Link to="/login" className="text-gray-700 hover:text-blue-600">
-            Login
+            Log In
+          </Link>
+          <Link to="/profile" className="text-blue-600">
+            My Profile
           </Link>
         </div>
       </nav>

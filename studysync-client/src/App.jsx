@@ -6,6 +6,7 @@ import LoginPage from "./pages/Loginpage";
 import MainLayout from "./layouts/MainLayout";
 import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "react-hot-toast";
+import ProfilePage from "./pages/ProfilePage";
 
 const App = () => {
   // Check token once at the top for conditional redirect
@@ -37,6 +38,14 @@ const App = () => {
             element={
               <PrivateRoute>
                 <DashboardPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <ProfilePage />
               </PrivateRoute>
             }
           />
