@@ -5,7 +5,7 @@ import Note from "../models/Note.js";
 // @status protected
 export const createNote = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, tags } = req.body;
 
     if (!title || !content) {
       res.status(400).json({ message: "Title and Content are required!" });
@@ -14,11 +14,12 @@ export const createNote = async (req, res) => {
     const newNote = new Note({
       title,
       content,
+      tags,
       user: req.user._id, // Comes from auth middleware
     });
 
-    await newNote.save();
-    res.status(201).json(newNote);
+    const savedNote = await newNote.save();
+    res.status(201).json(savedNote);
   } catch (error) {
     res.status(500).json({ message: "Failed to create note!" });
   }
@@ -52,6 +53,7 @@ export const updateNote = async (req, res) => {
 
     note.title = req.body.title || note.title;
     note.content = req.body.content || note.content;
+    note.tags = req.body.tags || note.tags;
 
     const updatedNote = await note.save();
     res.status(200).json(updatedNote);
