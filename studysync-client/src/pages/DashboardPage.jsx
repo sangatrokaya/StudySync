@@ -6,6 +6,7 @@ import {
   Trash2,
   SquarePen,
   LogOutIcon,
+  X,
 } from "lucide-react"; /* For icons */
 import toast from "react-hot-toast";
 
@@ -18,6 +19,9 @@ const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterBy, setFilterBy] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
+  const [tags, setTags] = useState([]); /* NEW: tags array */
+  const [newTag, setNewTag] = useState(""); /* NEW: controlled tag input */
+
   const navigate = useNavigate();
 
   //   Get token from localStorage
@@ -62,7 +66,11 @@ const DashboardPage = () => {
     try {
       if (isEditing) {
         // Update existing note
-        const res = await axios.put(`/notes/${editNoteId}`, { title, content });
+        const res = await axios.put(`/notes/${editNoteId}`, {
+          title,
+          content,
+          tags,
+        });
 
         // Replace the updated note in the list
         const updatedNotes = notes.map((note) =>
@@ -82,7 +90,8 @@ const DashboardPage = () => {
       //   Reset form
       setTitle("");
       setContent("");
-      toast.success("Note added!");
+      setTags([]);
+      toast.success(isEditing ? "note updated!" : "Note added!");
     } catch (err) {
       console.error(
         "Failed to add/update a new note!",
@@ -124,6 +133,21 @@ const DashboardPage = () => {
     setEditNoteId(note._id);
     setTitle(note.title);
     setContent(note.content);
+    setTags(note.tags || []);
+  };
+
+  // Add tags handler
+  const handleAddTag = () => {
+    const tag = newTag.trim();
+    if (tag && !tags.includes(tag)) {
+      setTags([...tags, tag]);
+      setNewTag("");
+    }
+  };
+
+  // Remove tags handler
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   // Filter + Sort Notes list before rendering
@@ -132,7 +156,8 @@ const DashboardPage = () => {
       const query = searchQuery.toLowerCase();
       return (
         note.title.toLowerCase().includes(query) ||
-        note.content.toLowerCase().includes(query)
+        note.content.toLowerCase().includes(query) ||
+        (note.tags || []).some((tag) => tag.toLowerCase().includes(query))
       );
     })
     .filter((note) => {
@@ -219,7 +244,44 @@ const DashboardPage = () => {
             placeholder="Write Your Note Content Here..."
             onChange={(e) => setContent(e.target.value)}
             className="w-full p-3 border border-gray-300 rounded-lg px-4 py-2 h-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          ></textarea>
+          />
+
+          {/* Tags Section */}
+          <div>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newTag}
+                placeholder="Enter tags"
+                onChange={(e) => setNewTag(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={handleAddTag}
+                className="bg-blue-500 text-white px-4 py-1 rounded-lg"
+              >
+                Add Tag
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="flex items-center bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-sm"
+                >
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveTag(tag)}
+                    className="ml-1 text-blue-500 hover:text-red-500"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition"
@@ -245,6 +307,18 @@ const DashboardPage = () => {
                 <p className="text-gray-700 mt-2 whitespace-pre-wrap">
                   {note.content}
                 </p>
+                {note.tags && note.tags.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {note.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-gray-200 text-sm px-2 py-1 rounded-full"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <p className="text-sm text-gray-400 mt-3">
                   Updated: {new Date(note.updatedAt).toLocaleString()}
                 </p>
